@@ -34,7 +34,12 @@ EDITOR=mvim TARGET_DIRECTORY=~/dev clone_git_file https://github.com/brandoncc/c
 
 ### Bonus
 
-You can also supply the repo url or a repo directory url, and that directory will be opened by your editor
+* You can also supply the repo url or a repo directory url, and that directory will be opened by your editor
+* Setup an alias to make using the gem easy. For example, here is mine (zsh):
+
+    ```bash
+    alias cgf="TARGET_DIRECTORY=~/dev EDITOR=mvim clone_git_file $1"
+    ```
 
 # Limitations
 
