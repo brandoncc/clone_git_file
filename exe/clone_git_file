@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require 'clone_git_file'
+
+file = ARGV[0]
+abort("You forgot the file!") unless file
+abort("You haven't specified a target directory") unless ENV["TARGET_DIRECTORY"]
+abort("Target directory doesn't exist") unless Dir.exists?(File.expand_path(ENV["TARGET_DIRECTORY"]))
+abort("No editor set, please specify the EDITOR environment variable") unless ENV["EDITOR"]
+abort("Sorry, github is the only service currently compatible") unless file.match(/github\.com/)
+
+cloner = CloneGitFile::Cloner.new(file)
+cloner.open_file
