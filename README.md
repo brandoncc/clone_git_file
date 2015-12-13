@@ -1,3 +1,9 @@
+# Installation
+
+```bash
+gem install clone_git_file
+```
+
 # Description
 
 This gem will clone the repository containing a file, then open that file in
