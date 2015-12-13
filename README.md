@@ -26,6 +26,10 @@ beginning. For example:
 EDITOR=mvim TARGET_DIRECTORY=~/dev clone_git_file https://github.com/brandoncc/clone_git_file/blob/master/README.md
 ```
 
+### Bonus
+
+You can also supply the repo url or a repo directory url, and that directory will be opened by your editor
+
 # Limitations
 
 Github is the only service that is current compatible. I would like to add more
