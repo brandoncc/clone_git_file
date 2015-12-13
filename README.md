@@ -6,6 +6,22 @@ gem install clone_git_file
 
 # Description
 
+#### ;tldr
+
+This gem allows you to replace these commands:
+
+1. `mkdir -p ~/dev/author`
+2. `cd ~/dev/author`
+3. `git clone https://github.com/author/repo`
+4. `cd repo`
+5. `myeditor file.rb`
+
+with:
+
+`cgf https://github.com/author/repo/file.rb` (assuming you setup the alias below)
+
+#### Long version
+
 This gem will clone the repository containing a file, then open that file in
 your chosen editor. If the repository already exists in the specified directory,
 any uncommitted changes will be lost (`git reset HEAD --hard` will be run). The
