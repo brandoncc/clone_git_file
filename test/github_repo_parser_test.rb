@@ -107,6 +107,60 @@ describe CloneGitFile::GithubRepoParser do
         @parser.branch_name.must_equal "master"
       end
     end
+
+    context "url is a subdirectory" do
+      context "url includes a branch" do
+        before do
+          @parser = CloneGitFile::GithubRepoParser.new("https://github.com/author/repo/tree/master/sub/directory").parse
+        end
+
+        it "parses the relative path" do
+          @parser.file_relative_path.must_equal "sub/directory"
+        end
+
+        it "parses the authors github username" do
+          @parser.github_username.must_equal "author"
+        end
+
+        it "parses the repo name" do
+          @parser.repo_name.must_equal "repo"
+        end
+
+        it "parses the base repo url" do
+          @parser.repo_url.must_equal "https://github.com/author/repo"
+        end
+
+        it "parses branch name" do
+          @parser.branch_name.must_equal "master"
+        end
+      end
+
+      context "url does not include a branch" do
+        before do
+          @parser = CloneGitFile::GithubRepoParser.new("https://github.com/author/repo/sub/directory").parse
+        end
+
+        it "parses the relative path" do
+          @parser.file_relative_path.must_equal "sub/directory"
+        end
+
+        it "parses the authors github username" do
+          @parser.github_username.must_equal "author"
+        end
+
+        it "parses the repo name" do
+          @parser.repo_name.must_equal "repo"
+        end
+
+        it "parses the base repo url" do
+          @parser.repo_url.must_equal "https://github.com/author/repo"
+        end
+
+        it "has a nil branch name" do
+          @parser.branch_name.must_be_nil
+        end
+      end
+    end
   end
 
   # we only need enough validation to make sure our parsing methods can function

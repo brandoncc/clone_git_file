@@ -55,7 +55,7 @@ module CloneGitFile
     end
 
     def is_branch?
-      @file.match(%r{#{Regexp.escape(parse_repo_url)}/blob/[^/]+/.+})
+      @file.match(%r{#{Regexp.escape(parse_repo_url)}/(blob|tree)/[^/]+/.+})
     end
 
     def is_tree?
