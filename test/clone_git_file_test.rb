@@ -15,7 +15,7 @@ describe CloneGitFile do
 
     it "clones new repos" do
       expected_clone_command = "git clone https://github.com/author/repo /target/author/repo"
-      expected_launch_command = "myeditor /target/author/repo/some/file.rb"
+      expected_launch_command = "cd /target/author/repo/some\nmyeditor /target/author/repo/some/file.rb"
 
       Dir.stubs(:exists?).returns(false)
       @cloner.expects(:system).with(expected_clone_command)
@@ -26,7 +26,7 @@ describe CloneGitFile do
 
     it "updates repos which exist in target directory" do
       expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-      expected_launch_command = "myeditor /target/author/repo/some/file.rb"
+      expected_launch_command = "cd /target/author/repo/some\nmyeditor /target/author/repo/some/file.rb"
 
       Dir.stubs(:exists?).returns(true)
       @cloner.expects(:system).with(expected_update_command)

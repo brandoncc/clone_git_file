@@ -28,7 +28,13 @@ module CloneGitFile
     end
 
     def launch_editor
-      system("#{ENV["EDITOR"]} #{local_repo_path}/#{parsed_data.file_relative_path}")
+      commands = ""
+      file_path = "#{local_repo_path}/#{parsed_data.file_relative_path}"
+
+      # change into the directory so that relative file loads will work
+      commands << "cd #{File.dirname(file_path)}"
+      commands << "\n#{ENV["EDITOR"]} #{file_path}"
+      system(commands)
     end
 
     def clone_repo
