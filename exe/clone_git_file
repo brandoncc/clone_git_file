@@ -1,12 +1,57 @@
 #!/usr/bin/env ruby
 
 require 'clone_git_file'
+require 'optparse'
 
-file = ARGV[0]
-abort("You forgot the file!") unless file
-abort("You haven't specified a target directory") unless ENV["TARGET_DIRECTORY"]
-abort("No editor set, please specify the EDITOR environment variable") unless ENV["EDITOR"]
-abort("Sorry, github is the only service currently compatible") unless file.match(/github\.com/)
+options = {}
 
-cloner = CloneGitFile::Cloner.new(file)
+OptionParser.new do |opts|
+  opts.banner = "\nA utility for easily cloning from git services\n"
+
+  opts.on("-o", "--open", "Open in editor after cloning") do
+    options[:open_in_editor] = true
+  end
+
+  opts.on("-s", "--silent", "Suppress messages from cloning process") do
+    options[:silent] = true
+  end
+
+  opts.on("-t", "--terminal", "Output editor run command to the terminal",
+          "instead of executing it (same as -ot)") do
+    options[:output_run_command_to_terminal] = true
+  end
+
+  opts.on("-h", "--help", "Displays help") do
+    puts opts
+    exit
+  end
+end.parse!
+
+def verify_url_was_provided(url)
+  abort("You must specify a url to clone") unless url
+end
+
+def verify_target_directory_was_provided
+  abort("You haven't specified a target directory") unless ENV["TARGET_DIRECTORY"]
+end
+
+def verify_url_is_github(url)
+  abort("Sorry, github is the only service currently compatible") unless url.match(/github\.com/)
+end
+
+def verify_editor_is_set_when_necessary(options)
+  if options[:open_in_editor] || options[:output_run_command_to_terminal]
+    unless ENV["EDITOR"]
+      abort("No editor set, please specify the EDITOR environment variable")
+    end
+  end
+end
+
+url = ARGV[0]
+verify_url_was_provided(url)
+verify_target_directory_was_provided
+verify_url_is_github(url)
+verify_editor_is_set_when_necessary(options)
+
+cloner = CloneGitFile::Cloner.new(url, options)
 cloner.open_file
