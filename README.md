@@ -18,28 +18,37 @@ This gem allows you to replace these commands:
 
 with:
 
-`cgf https://github.com/author/repo/file.rb` (assuming you setup the alias below)
+`ogf https://github.com/author/repo/file.rb` (if you choose to setup an alias)
 
 #### Long version
 
-This gem will clone the repository containing a file, then open that file in
-your chosen editor. If the repository already exists in the specified directory,
-any uncommitted changes will be lost (`git reset HEAD --hard` will be run). The
-repository will be pulled after resetting, to get the latest changes.
+This gem will clone the repository containing a file, optionally opening that
+file in your chosen editor. If the repository already exists in the specified
+directory, any uncommitted changes will be lost (`git reset HEAD --hard` will
+be run). The repository will be pulled after resetting, to get the latest
+changes.
 
 The editor that will be used is specified using the `EDITOR` environment
 variable, which allows you to easily override your editor only for this command.
 
 # Usage
 
-At a minimum, you need to specify a target directory:
+At a minimum, you need to specify a target directory and url:
 
 ```bash
 TARGET_DIRECTORY=~/dev clone_git_file https://github.com/brandoncc/clone_git_file/blob/master/README.md
 ```
 
-That will clone this repository to `~/dev/clone_git_file` then open `README.md`
-from the `master` branch.
+That will clone this repository to `~/dev/clone_git_file`, then switch to the
+`master` branch. A message will then be shown giving you that location.
+
+There are command switches available as follows:
+
+| Switch | Description |
+| --- | --- |
+| -o, <nobr>--open</nobr> | Open the file in the specified editor after cloning |
+| -t, <nobr>--terminal</nobr> | Output the command which would be used to open the file in your editor, as text in the terminal. This is useful for piping into other commands. Since Ruby `system` method executions are run in a child process, this is useful for opening the file in your editor in the current shell (more details in the bonus section). This is equivalent to `-ot`. |
+| -s, <nobr>--silent</nobr> | Suppress messages from the cloning process. If you want to pipe the output of `-t` into a command, you should also use this. |
 
 If you want to override your default editor, just add `EDITOR=myeditor` to the
 beginning. For example:
@@ -50,14 +59,21 @@ EDITOR=mvim TARGET_DIRECTORY=~/dev clone_git_file https://github.com/brandoncc/c
 
 ### Bonus
 
-* You can also supply the repo url or a repo directory url, and that directory will be opened by your editor
-* Setup an alias to make using the gem easy. For example, here is mine (zsh):
+* You can also supply the repo url or a repo subdirectory url, and that directory will be opened by your editor.
+* Setup an alias to make using the gem easy. For example, here are mine (zsh):
 
     ```bash
     alias cgf="TARGET_DIRECTORY=~/dev EDITOR=mvim clone_git_file $1"
+    alias ogf="TARGET_DIRECTORY=~/dev EDITOR=mvim clone_git_file -ts $1"
     ```
+    
+    `cgf` clones, then prints a message with the location of the cloned file/directory.
+    
+    `ogf` prints the commands to open the file/directory in my editor. I then use `source <(...)` to pipe the printed command to `source` which runs it in my current shell. This fixes some weird things that happen when opening the editor in a child process, and also allows the current directory of my current shell to be changed (instead of the child process shell which will be lost when you close the editor).
+    
+    Unfortunately `$1` doesn't get passed into the nested command, so the `source <()` usage can't be in the alias (still looking for a solution to this if anybody has one), so I used TextExpander to setup a snippet which handles that part, with the final command I run being `source <(ogf https://github.com/brandoncc/clone_git_file/blob/master/README.md)`.
 
 # Limitations
 
-Github is the only service that is current compatible. I would like to add more
-services in the future.
+* Github is the only service that is currently compatible. I would like to add more services in the future.
+* `-s, --silent` is only available on operating systems which can direct output to `/dev/null`, which means it is unavailable on Windows.
