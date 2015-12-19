@@ -2,6 +2,7 @@
 
 require 'clone_git_file'
 require 'optparse'
+require 'rbconfig'
 
 options = {}
 
@@ -47,11 +48,20 @@ def verify_editor_is_set_when_necessary(options)
   end
 end
 
+def verify_silent_is_available
+  abort("Silent mode is not available on Windows") if windows?
+end
+
+def windows?
+  RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+end
+
 url = ARGV[0]
 verify_url_was_provided(url)
 verify_target_directory_was_provided
 verify_url_is_github(url)
 verify_editor_is_set_when_necessary(options)
+verify_silent_is_available if options[:silent]
 
 cloner = CloneGitFile::Cloner.new(url, options)
 cloner.open_file
