@@ -60,18 +60,29 @@ EDITOR=mvim TARGET_DIRECTORY=~/dev clone_git_file https://github.com/brandoncc/c
 ### Bonus
 
 * You can also supply the repo url or a repo subdirectory url, and that directory will be opened by your editor.
-* Setup an alias to make using the gem easy. For example, here are mine (zsh):
+* Setup an alias and/or function to make using the gem easy. For example, here are mine (zsh):
 
     ```bash
     alias cgf="TARGET_DIRECTORY=~/dev EDITOR=mvim clone_git_file $1"
-    alias ogf="TARGET_DIRECTORY=~/dev EDITOR=mvim clone_git_file -ts $1"
+
+    function ogf () {
+      echo "Cloning, your editor will open when clone has completed..."
+      source <(TARGET_DIRECTORY=~/dev EDITOR=mvim clone_git_file -ts $1)
+    }
     ```
     
-    `cgf` clones, then prints a message with the location of the cloned file/directory.
+    `cgf` clones, then prints a message with the location of the cloned
+    file/directory.
     
-    `ogf` prints the commands to open the file/directory in my editor. I then use `source <(...)` to pipe the printed command to `source` which runs it in my current shell. This fixes some weird things that happen when opening the editor in a child process, and also allows the current directory of my current shell to be changed (instead of the child process shell which will be lost when you close the editor).
+    `ogf` prints the commands to open the file/directory in my editor. I then
+    use `source <(...)` to pipe the printed command to `source` which runs it
+    in my current shell. This fixes some weird things that happen when opening
+    the editor in a child process, and also allows the current directory of my
+    current shell to be changed (instead of the child process shell which will
+    be lost when you close the editor).
     
-    Unfortunately `$1` doesn't get passed into the nested command, so the `source <()` usage can't be in the alias (still looking for a solution to this if anybody has one), so I used TextExpander to setup a snippet which handles that part, with the final command I run being `source <(ogf https://github.com/brandoncc/clone_git_file/blob/master/README.md)`.
+    `ogf` has to be a function so that `$1` will expand properly. If you use an
+    alias instead, `$1` doesn't hold the correct value in the nested command.
 
 # Limitations
 
