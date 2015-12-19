@@ -3,8 +3,9 @@ require "clone_git_file/github_repo_parser"
 
 module CloneGitFile
   class Cloner
-    def initialize(file)
+    def initialize(file, options = {})
       @file = file
+      @options = options
     end
 
     def open_file
@@ -14,7 +15,12 @@ module CloneGitFile
         clone_repo
       end
 
-      launch_editor
+      if @options[:open_in_editor] ||
+          @options[:output_run_command_to_terminal]
+        launch_editor
+      else
+        print_clone_location
+      end
     end
 
     private
@@ -34,7 +40,16 @@ module CloneGitFile
       # change into the directory so that relative file loads will work
       commands << "cd #{File.dirname(file_path)}"
       commands << "\n#{ENV["EDITOR"]} #{file_path}"
-      system(commands)
+
+      if @options[:output_run_command_to_terminal]
+        puts(commands)
+      else
+        system(commands)
+      end
+    end
+
+    def print_clone_location
+      puts "Cloned to: #{local_repo_path}/#{parsed_data.file_relative_path}"
     end
 
     def clone_repo
@@ -46,6 +61,8 @@ module CloneGitFile
         commands << "\ngit checkout #{parsed_data.branch_name}"
       end
 
+      commands = make_commands_silent(commands) if @options[:silent]
+
       system(commands)
     end
 
@@ -56,8 +73,15 @@ module CloneGitFile
       commands << "\ngit reset HEAD --hard"
       commands << "\ngit pull"
       commands << "\ngit checkout #{parsed_data.branch_name}" if parsed_data.branch_name
+      commands = make_commands_silent(commands) if @options[:silent]
 
       system(commands)
+    end
+
+    def make_commands_silent(commands)
+      cmds = commands.split("\n")
+
+      cmds.map { |c| "#{c} &> /dev/null" }.join("\n")
     end
   end
 end
