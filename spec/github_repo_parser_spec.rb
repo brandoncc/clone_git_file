@@ -61,8 +61,8 @@ describe CloneGitFile::GithubRepoParser do
         CloneGitFile::GithubRepoParser.new("https://github.com/author/repo").parse
       end
 
-      it "has a blank relative file path" do
-        expect(parser.file_relative_path).to eq("")
+      it "has a nil relative file path" do
+        expect(parser.file_relative_path).to be_nil
       end
 
       it "parses the authors github username" do
@@ -87,8 +87,8 @@ describe CloneGitFile::GithubRepoParser do
         CloneGitFile::GithubRepoParser.new("https://github.com/author/repo/tree/master").parse
       end
 
-      it "has a blank relative file path" do
-        expect(parser.file_relative_path).to eq("")
+      it "has a nil relative file path" do
+        expect(parser.file_relative_path).to be_nil
       end
 
       it "parses the authors github username" do

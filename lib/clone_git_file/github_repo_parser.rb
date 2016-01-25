@@ -36,10 +36,11 @@ module CloneGitFile
     end
 
     def parse_file_relative_path
-      path = @file.match(%r{#{Regexp.escape(parse_repo_url)}/(.+)$})[1]
+      path = @file.match(%r{#{Regexp.escape(parse_repo_url)}/(.+)$})
+      path = path.nil? ? "" : path[1]
       path.sub!(%r{^(?:blob|tree)/[^/]+}, '') if has_branch?
       path.sub!(%r{^/}, '')
-      path
+      path == "" ? nil : path
     rescue NoMethodError
       ''
     end

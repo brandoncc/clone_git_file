@@ -39,7 +39,11 @@ module CloneGitFile
       file_path << "/#{parsed_data.file_relative_path}" if parsed_data.file_relative_path
 
       # change into the directory so that relative file loads will work
-      commands << "cd #{File.dirname(file_path)}"
+      if File.directory?(file_path)
+        commands << "cd #{file_path}"
+      else
+        commands << "cd #{File.dirname(file_path)}"
+      end
       commands << "\n#{ENV["EDITOR"]} #{file_path}"
 
       if @options[:output_run_command_to_terminal]
@@ -51,7 +55,7 @@ module CloneGitFile
 
     def print_clone_location
       clone_path = "#{local_repo_path}"
-      clone_path << "/#{parsed_data.file_relative_path}" unless parsed_data.file_relative_path == ""
+      clone_path << "/#{parsed_data.file_relative_path}" if parsed_data.file_relative_path
 
       puts "Cloned to: #{clone_path}"
     end
