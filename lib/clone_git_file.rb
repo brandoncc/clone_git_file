@@ -35,7 +35,8 @@ module CloneGitFile
 
     def launch_editor
       commands = ""
-      file_path = "#{local_repo_path}/#{parsed_data.file_relative_path}"
+      file_path = "#{local_repo_path}"
+      file_path << "/#{parsed_data.file_relative_path}" if parsed_data.file_relative_path
 
       # change into the directory so that relative file loads will work
       commands << "cd #{File.dirname(file_path)}"
@@ -49,14 +50,18 @@ module CloneGitFile
     end
 
     def print_clone_location
-      puts "Cloned to: #{local_repo_path}/#{parsed_data.file_relative_path}"
+      clone_path = "#{local_repo_path}"
+      clone_path << "/#{parsed_data.file_relative_path}" unless parsed_data.file_relative_path == ""
+
+      puts "Cloned to: #{clone_path}"
     end
 
     def clone_repo
       commands = ""
       commands << "git clone #{parsed_data.repo_url} #{local_repo_path}"
 
-      if parsed_data.branch_name
+      branch_name = parsed_data.branch_name
+      if branch_name && branch_name != ""
         commands << "\ncd #{local_repo_path}"
         commands << "\ngit checkout #{parsed_data.branch_name}"
       end
