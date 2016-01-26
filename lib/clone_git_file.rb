@@ -4,7 +4,7 @@ require "clone_git_file/github_repo_parser"
 module CloneGitFile
   class Cloner
     def initialize(file, options = {})
-      @file = file
+      @file = file.gsub("%20", " ")
       @options = options
     end
 
@@ -44,7 +44,7 @@ module CloneGitFile
       else
         commands << "cd #{File.dirname(file_path)}"
       end
-      commands << "\n#{ENV["EDITOR"]} #{file_path}"
+      commands << %(\n#{ENV["EDITOR"]} "#{file_path}")
 
       if @options[:output_run_command_to_terminal]
         puts(commands)

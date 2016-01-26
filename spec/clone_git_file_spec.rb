@@ -16,6 +16,13 @@ describe CloneGitFile do
 
   it { expect(::CloneGitFile::VERSION).not_to be_nil }
 
+  describe "#new" do
+    it "decodes %20 to a space" do
+      cloner = ::CloneGitFile::Cloner.new("https://github.com/author/repo%20with%20spaces")
+      expect(cloner.instance_variable_get(:@file)).to eq("https://github.com/author/repo with spaces")
+    end
+  end
+
   describe "#open_file" do
     let(:url) { "https://github.com/author/repo/some/file.rb" }
     let(:cloner) { ::CloneGitFile::Cloner.new(url) }
@@ -49,7 +56,7 @@ describe CloneGitFile do
 
           it "outputs the commands to the terminal instead of executing them" do
             expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-            expected_output = "cd /target/author/repo/some\nmyeditor /target/author/repo/some/file.rb"
+            expected_output = %(cd /target/author/repo/some\nmyeditor "/target/author/repo/some/file.rb")
             allow(Dir).to receive(:exists?).and_return(true)
             expect(cloner).to receive(:system).with(expected_update_command)
             expect(cloner).to receive(:puts).with(expected_output)
@@ -62,7 +69,7 @@ describe CloneGitFile do
 
           it "outputs the commands to the terminal instead of executing them" do
             expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-            expected_output = "cd /target/author/repo/some\nmyeditor /target/author/repo/some"
+            expected_output = %(cd /target/author/repo/some\nmyeditor "/target/author/repo/some")
             allow(Dir).to receive(:exists?).and_return(true)
             expect(cloner).to receive(:system).with(expected_update_command)
             expect(cloner).to receive(:puts).with(expected_output)
@@ -75,7 +82,7 @@ describe CloneGitFile do
 
           it "outputs the commands to the terminal instead of executing them" do
             expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-            expected_output = "cd /target/author/repo\nmyeditor /target/author/repo"
+            expected_output = %(cd /target/author/repo\nmyeditor "/target/author/repo")
             allow(Dir).to receive(:exists?).and_return(true)
             expect(cloner).to receive(:system).with(expected_update_command)
             expect(cloner).to receive(:puts).with(expected_output)
@@ -88,7 +95,7 @@ describe CloneGitFile do
 
           it "outputs the commands to the terminal instead of executing them" do
             expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-            expected_output = "cd /target/author/repo\nmyeditor /target/author/repo"
+            expected_output = %(cd /target/author/repo\nmyeditor "/target/author/repo")
             allow(Dir).to receive(:exists?).and_return(true)
             expect(cloner).to receive(:system).with(expected_update_command)
             expect(cloner).to receive(:puts).with(expected_output)
@@ -107,7 +114,7 @@ describe CloneGitFile do
 
           it "outputs the commands to the terminal instead of executing them" do
             expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-            expected_output = "cd /target/author/repo/some\nmyeditor /target/author/repo/some/file.rb"
+            expected_output = %(cd /target/author/repo/some\nmyeditor "/target/author/repo/some/file.rb")
             allow(Dir).to receive(:exists?).and_return(true)
             expect(cloner).to receive(:system).with(expected_update_command)
             expect(cloner).to receive(:puts).with(expected_output)
@@ -120,7 +127,7 @@ describe CloneGitFile do
 
           it "outputs the commands to the terminal instead of executing them" do
             expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-            expected_output = "cd /target/author/repo/some\nmyeditor /target/author/repo/some"
+            expected_output = %(cd /target/author/repo/some\nmyeditor "/target/author/repo/some")
             allow(Dir).to receive(:exists?).and_return(true)
             expect(cloner).to receive(:system).with(expected_update_command)
             expect(cloner).to receive(:puts).with(expected_output)
@@ -133,7 +140,7 @@ describe CloneGitFile do
 
           it "outputs the commands to the terminal instead of executing them" do
             expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-            expected_output = "cd /target/author/repo\nmyeditor /target/author/repo"
+            expected_output = %(cd /target/author/repo\nmyeditor "/target/author/repo")
             allow(Dir).to receive(:exists?).and_return(true)
             expect(cloner).to receive(:system).with(expected_update_command)
             expect(cloner).to receive(:puts).with(expected_output)
@@ -146,7 +153,7 @@ describe CloneGitFile do
 
           it "outputs the commands to the terminal instead of executing them" do
             expected_update_command = "cd /target/author/repo\ngit reset HEAD --hard\ngit pull"
-            expected_output = "cd /target/author/repo\nmyeditor /target/author/repo"
+            expected_output = %(cd /target/author/repo\nmyeditor "/target/author/repo")
             allow(Dir).to receive(:exists?).and_return(true)
             expect(cloner).to receive(:system).with(expected_update_command)
             expect(cloner).to receive(:puts).with(expected_output)
@@ -177,7 +184,7 @@ describe CloneGitFile do
 
         it "clones new repos" do
           expected_clone_command = "git clone https://github.com/author/repo /target/author/repo"
-          expected_launch_command = "cd /target/author/repo/some\nmyeditor /target/author/repo/some/file.rb"
+          expected_launch_command = %(cd /target/author/repo/some\nmyeditor "/target/author/repo/some/file.rb")
           allow(Dir).to receive(:exists?).and_return(false)
           expect(cloner).to receive(:system).with(expected_clone_command)
           expect(cloner).to receive(:system).with(expected_launch_command)
@@ -191,7 +198,7 @@ describe CloneGitFile do
 
         it "clones new repos" do
           expected_clone_command = "git clone https://github.com/author/repo /target/author/repo"
-          expected_launch_command = "cd /target/author/repo\nmyeditor /target/author/repo"
+          expected_launch_command = %(cd /target/author/repo\nmyeditor "/target/author/repo")
           allow(Dir).to receive(:exists?).and_return(false)
           expect(cloner).to receive(:system).with(expected_clone_command)
           expect(cloner).to receive(:system).with(expected_launch_command)
@@ -205,7 +212,7 @@ describe CloneGitFile do
 
         it "clones new repos" do
           expected_clone_command = "git clone https://github.com/author/repo /target/author/repo"
-          expected_launch_command = "cd /target/author/repo/some\nmyeditor /target/author/repo/some"
+          expected_launch_command = %(cd /target/author/repo/some\nmyeditor "/target/author/repo/some")
           allow(Dir).to receive(:exists?).and_return(false)
           expect(cloner).to receive(:system).with(expected_clone_command)
           expect(cloner).to receive(:system).with(expected_launch_command)
@@ -219,7 +226,7 @@ describe CloneGitFile do
 
         it "clones new repos" do
           expected_clone_command = "git clone https://github.com/author/repo /target/author/repo"
-          expected_launch_command = "cd /target/author/repo\nmyeditor /target/author/repo"
+          expected_launch_command = %(cd /target/author/repo\nmyeditor "/target/author/repo")
           allow(Dir).to receive(:exists?).and_return(false)
           expect(cloner).to receive(:system).with(expected_clone_command)
           expect(cloner).to receive(:system).with(expected_launch_command)
