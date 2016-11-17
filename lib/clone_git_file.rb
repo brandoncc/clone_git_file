@@ -40,9 +40,9 @@ module CloneGitFile
 
       # change into the directory so that relative file loads will work
       if File.directory?(file_path)
-        commands << "cd #{file_path}"
+        commands << %(cd "#{file_path}")
       else
-        commands << "cd #{File.dirname(file_path)}"
+        commands << %(cd "#{File.dirname(file_path)}")
       end
       commands << %(\n#{ENV["EDITOR"]} "#{file_path}")
 
@@ -62,11 +62,11 @@ module CloneGitFile
 
     def clone_repo
       commands = ""
-      commands << "git clone #{parsed_data.repo_url} #{local_repo_path}"
+      commands << %(git clone #{parsed_data.repo_url} "#{local_repo_path}")
 
       branch_name = parsed_data.branch_name
       if branch_name && branch_name != ""
-        commands << "\ncd #{local_repo_path}"
+        commands << %(\ncd "#{local_repo_path}")
         commands << "\ngit checkout #{parsed_data.branch_name}"
       end
 
@@ -78,7 +78,7 @@ module CloneGitFile
     def update_repo
       commands = ""
 
-      commands << "cd #{local_repo_path}"
+      commands << %(cd "#{local_repo_path}")
       commands << "\ngit reset HEAD --hard"
       commands << "\ngit pull"
       commands << "\ngit checkout #{parsed_data.branch_name}" if parsed_data.branch_name
