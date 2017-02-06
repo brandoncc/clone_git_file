@@ -30,7 +30,7 @@ module CloneGitFile
     end
 
     def local_repo_path
-      @local_repo_path ||= "#{ENV["TARGET_DIRECTORY"]}/#{parsed_data.github_username}/#{parsed_data.repo_name}"
+      @local_repo_path ||= File.expand_path("#{ENV["TARGET_DIRECTORY"]}/#{parsed_data.github_username}/#{parsed_data.repo_name}")
     end
 
     def launch_editor
